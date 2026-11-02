@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-stone-950 text-stone-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cava Digital - Catálogo & Ficha Técnica</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            wine: {
+              900: '#380a15',
+              800: '#540d1f',
+              700: '#75142e',
+              600: '#9b1b3b',
+              500: '#c2234b',
+            },
+            amber: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            serif: ['Georgia', 'Cambria', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1c1917;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #44403c;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #78716c;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .bottle-glow {
+      filter: drop-shadow(0 15px 25px rgba(194, 35, 75, 0.15));
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-stone-950 font-sans flex flex-col antialiased selection:bg-amber-500 selection:text-stone-950">
+
+  <!-- BARRA SUPERIOR / HEADER -->
+  <header class="sticky top-0 z-40 bg-stone-950/90 backdrop-blur-md border-b border-stone-800/80 px-4 lg:px-8 py-3.5 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Logo y Rol -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-wine-700 to-amber-600 flex items-center justify-center shadow-lg shadow-wine-950/60 ring-1 ring-amber-500/30">
+          <i data-lucide="wine" class="w-5 h-5 text-amber-200"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-serif font-bold tracking-wide text-stone-100">CAVA DIGITAL</h1>
+            <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Pro B2B</span>
+          </div>
+          <p class="text-xs text-stone-400">Catálogo interactivo para Sala y Ventas</p>
+        </div>
+      </div>
+
+      <!-- Buscador Global Rápido -->
+      <div class="flex-1 max-w-md relative hidden sm:block">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"></i>
+        <input 
+          id="searchInput"
+          type="text" 
+          placeholder="Buscar vino, uva, bodega o región..." 
+          class="w-full bg-stone-900/90 border border-stone-800 rounded-xl pl-10 pr-4 py-2 text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500/70 focus:ring-1 focus:ring-amber-500/50 transition-all"
+        />
+        <button id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Acciones de Cabecera -->
+      <div class="flex items-center gap-2">
+        <button 
+          id="btnQrScannerMock"
+          onclick="toggleQrScanner()"
+          title="Escanear Botella"
+          class="p-2.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-300 hover:text-amber-400 hover:border-stone-700 active:scale-95 transition-all flex items-center gap-2 text-xs font-medium">
+          <i data-lucide="qr-code" class="w-4 h-4 text-amber-400"></i>
+          <span class="hidden md:inline">Escanear QR</span>
+        </button>
+
+        <button 
+          onclick="resetAllFilters()"
+          title="Reiniciar Filtros"
+          class="p-2.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700 active:scale-95 transition-all text-xs">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Buscador móvil integrado -->
+    <div class="mt-2.5 sm:hidden relative">
+      <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+      <input 
+        id="searchInputMobile"
+        type="text" 
+        placeholder="Buscar uva, vino o región..." 
+        class="w-full bg-stone-900 border border-stone-800 rounded-xl pl-9 pr-3 py-2 text-xs text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500"
+      />
+    </div>
+  </header>
+
+  <!-- SECCIÓN DE FILTROS Y CATEGORÍAS -->
+  <nav class="bg-stone-900/60 border-b border-stone-800/60 py-3 px-4 lg:px-8 space-y-2">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+      
+      <!-- Filtro por Estilo de Vino -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="typeFilters">
+        <button onclick="setTypeFilter('all')" data-type="all" class="filter-type-btn active px-3.5 py-1.5 rounded-lg text-xs font-medium bg-amber-500 text-stone-950 shadow-sm transition-all whitespace-nowrap">
+          Todos los Vinos
+        </button>
+        <button onclick="setTypeFilter('Tinto')" data-type="Tinto" class="filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-700"></span> Tintos
+        </button>
+        <button onclick="setTypeFilter('Blanco')" data-type="Blanco" class="filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-yellow-200"></span> Blancos
+        </button>
+        <button onclick="setTypeFilter('Espumoso')" data-type="Espumoso" class="filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-amber-300"></span> Espumosos
+        </button>
+        <button onclick="setTypeFilter('Rosado')" data-type="Rosado" class="filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-pink-400"></span> Rosados
+        </button>
+      </div>
+
+      <!-- Filtro Rápido de Maridaje (Ideal para Meseros en mesa) -->
+      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+        <span class="text-[11px] text-stone-400 uppercase tracking-wider font-semibold mr-1 flex items-center gap-1 whitespace-nowrap">
+          <i data-lucide="utensils" class="w-3 h-3 text-amber-500"></i> Maridaje:
+        </span>
+        <button onclick="togglePairingFilter('Carnes')" data-pairing="Carnes" class="filter-pairing-btn px-2.5 py-1 rounded-md text-[11px] bg-stone-800/60 text-stone-300 border border-stone-700/60 hover:border-amber-500/50 whitespace-nowrap transition-colors">
+          🥩 Carnes Rojas
+        </button>
+        <button onclick="togglePairingFilter('Mariscos')" data-pairing="Mariscos" class="filter-pairing-btn px-2.5 py-1 rounded-md text-[11px] bg-stone-800/60 text-stone-300 border border-stone-700/60 hover:border-amber-500/50 whitespace-nowrap transition-colors">
+          🦪 Mariscos / Pescados
+        </button>
+        <button onclick="togglePairingFilter('Aves')" data-pairing="Aves" class="filter-pairing-btn px-2.5 py-1 rounded-md text-[11px] bg-stone-800/60 text-stone-300 border border-stone-700/60 hover:border-amber-500/50 whitespace-nowrap transition-colors">
+          🍗 Aves y Caza
+        </button>
+        <button onclick="togglePairingFilter('Postres')" data-pairing="Postres" class="filter-pairing-btn px-2.5 py-1 rounded-md text-[11px] bg-stone-800/60 text-stone-300 border border-stone-700/60 hover:border-amber-500/50 whitespace-nowrap transition-colors">
+          🧀 Quesos / Postres
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    
+    <!-- Contador y Guía de Uso Rápido -->
+    <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-stone-400">
+      <div>
+        Mostrando <span id="countVisible" class="font-bold text-amber-400">0</span> botellas seleccionadas para recomendación
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> En Cava (Disponible)</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-400"></i> Puntaje Internacional</span>
+      </div>
+    </div>
+
+    <!-- GRID DE TARJETAS DE VINO -->
+    <div id="winesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Inyectado dinámicamente con JS -->
+    </div>
+
+    <!-- ESTADO VACÍO (Si no hay resultados con filtros) -->
+    <div id="emptyState" class="hidden py-16 text-center space-y-4">
+      <div class="w-16 h-16 mx-auto rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500">
+        <i data-lucide="wine-off" class="w-8 h-8"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-base font-semibold text-stone-200">No se encontraron vinos</h3>
+        <p class="text-xs text-stone-400 max-w-sm mx-auto">No hay botellas que coincidan con los criterios o filtros seleccionados.</p>
+      </div>
+      <button onclick="resetAllFilters()" class="px-4 py-2 rounded-xl text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold transition-all">
+        Limpiar Filtros
+      </button>
+    </div>
+
+  </main>
+
+  <!-- MODAL: FICHA TÉCNICA PRO (VISTA DUAL COMENSAL / VENDEDOR) -->
+  <div id="wineModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div class="bg-stone-900 border border-stone-800 w-full max-w-3xl rounded-t-3xl sm:rounded-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Encabezado Modal -->
+      <div class="px-6 py-4 border-b border-stone-800 flex items-center justify-between bg-stone-950/80">
+        <div class="flex items-center gap-3">
+          <span id="modalTypeBadge" class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-wine-900/60 text-wine-400 border border-wine-700/50">
+            Tinto
+          </span>
+          <span id="modalOrigin" class="text-xs text-stone-400 font-medium">Valle de Guadalupe, México</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="copyWineSummary()" title="Copiar resumen para WhatsApp/Cliente" class="p-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition-colors">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
+          <button onclick="closeModal()" class="p-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition-colors">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- TABS: VISTA COMENSAL VS FICHA PRO -->
+      <div class="flex border-b border-stone-800 bg-stone-950/40 px-6 pt-2">
+        <button id="tabComensal" onclick="switchModalTab('comensal')" class="pb-3 px-4 text-xs font-semibold text-amber-400 border-b-2 border-amber-400 transition-all flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Vista Servicio & Comensal
+        </button>
+        <button id="tabPro" onclick="switchModalTab('pro')" class="pb-3 px-4 text-xs font-semibold text-stone-400 hover:text-stone-200 border-b-2 border-transparent transition-all flex items-center gap-2">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Ficha Técnica Pro (Vendedor)
+        </button>
+      </div>
+
+      <!-- CUERPO MODAL (SCROLLABLE) -->
+      <div class="p-6 overflow-y-auto space-y-6">
+        
+        <!-- Hero del Vino dentro del Modal -->
+        <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+          <div class="w-24 h-44 sm:w-28 sm:h-52 bg-stone-950 rounded-xl border border-stone-800 flex items-center justify-center p-2 relative shrink-0">
+            <div id="modalBottleSvgContainer" class="w-full h-full flex items-center justify-center bottle-glow">
+              <!-- Inyectado dinámicamente -->
+            </div>
+            <span id="modalVintageYear" class="absolute bottom-2 text-[10px] font-bold text-amber-400 bg-stone-900/90 border border-stone-700 px-2 py-0.5 rounded-full">
+              2020
+            </span>
+          </div>
+
+          <div class="space-y-2 flex-1 text-center sm:text-left">
+            <p id="modalWinery" class="text-xs uppercase tracking-widest text-amber-500 font-semibold">BODEGA</p>
+            <h2 id="modalName" class="text-2xl font-serif font-bold text-white leading-tight">Nombre del Vino</h2>
+            <p id="modalGrapes" class="text-xs text-stone-300">Cabernet Sauvignon 80%, Merlot 20%</p>
+            
+            <div class="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+              <span id="modalAbv" class="inline-flex items-center gap-1 text-[11px] bg-stone-800/80 px-2.5 py-1 rounded-md text-stone-300 border border-stone-700/60">
+                <i data-lucide="gauge" class="w-3 h-3 text-amber-400"></i> 13.5% Alc.
+              </span>
+              <span id="modalTemp" class="inline-flex items-center gap-1 text-[11px] bg-stone-800/80 px-2.5 py-1 rounded-md text-stone-300 border border-stone-700/60">
+                <i data-lucide="thermometer" class="w-3 h-3 text-sky-400"></i> Servir a 16-18°C
+              </span>
+              <span id="modalGlass" class="inline-flex items-center gap-1 text-[11px] bg-stone-800/80 px-2.5 py-1 rounded-md text-stone-300 border border-stone-700/60">
+                <i data-lucide="cup-soda" class="w-3 h-3 text-purple-400"></i> Copa Burdeos
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTENIDO TAB 1: COMENSAL -->
+        <div id="viewComensal" class="space-y-6">
+          
+          <!-- Escalas Sensoriales / Termómetro de cata -->
+          <div class="bg-stone-950/60 p-4 rounded-xl border border-stone-800/80 space-y-3">
+            <h3 class="text-xs font-semibold text-stone-200 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="activity" class="w-3.5 h-3.5 text-amber-400"></i> Perfil Sensorial al Paladar
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-xs">
+              <!-- Cuerpo -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-stone-400">
+                  <span>Cuerpo</span>
+                  <span id="modalBodyLabel" class="text-stone-200 font-medium">Medio-Robusto</span>
+                </div>
+                <div class="w-full h-2 bg-stone-800 rounded-full overflow-hidden">
+                  <div id="modalBodyBar" class="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full" style="width: 75%"></div>
+                </div>
+              </div>
+
+              <!-- Taninos -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-stone-400">
+                  <span>Taninos</span>
+                  <span id="modalTanninsLabel" class="text-stone-200 font-medium">Sedosos</span>
+                </div>
+                <div class="w-full h-2 bg-stone-800 rounded-full overflow-hidden">
+                  <div id="modalTanninsBar" class="h-full bg-gradient-to-r from-wine-600 to-rose-400 rounded-full" style="width: 60%"></div>
+                </div>
+              </div>
+
+              <!-- Acidez -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-stone-400">
+                  <span>Acidez</span>
+                  <span id="modalAcidityLabel" class="text-stone-200 font-medium">Equilibrada</span>
+                </div>
+                <div class="w-full h-2 bg-stone-800 rounded-full overflow-hidden">
+                  <div id="modalAcidityBar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full" style="width: 50%"></div>
+                </div>
+              </div>
+
+              <!-- Dulzor -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-stone-400">
+                  <span>Dulzor / Remanente</span>
+                  <span id="modalSweetLabel" class="text-stone-200 font-medium">Seco</span>
+                </div>
+                <div class="w-full h-2 bg-stone-800 rounded-full overflow-hidden">
+                  <div id="modalSweetBar" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full" style="width: 20%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notas de Cata Clave -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-400"></i> Notas Clave de Cata
+            </h4>
+            <div id="modalNotesPills" class="flex flex-wrap gap-2">
+              <!-- Inyectado dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Maridaje Recomendado -->
+          <div class="p-4 rounded-xl bg-gradient-to-br from-stone-900 to-stone-950 border border-stone-800 space-y-2">
+            <h4 class="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="chef-hat" class="w-3.5 h-3.5 text-amber-400"></i> Maridaje de Cocina Sugerido
+            </h4>
+            <p id="modalFoodText" class="text-xs text-stone-300 leading-relaxed">
+              Cortes de carne marmoleados a las brasas, costilla con reducción al vino tinto y quesos de oveja añejos.
+            </p>
+          </div>
+
+          <!-- Diálogo rápido para el mesero (Pitch en mesa) -->
+          <div class="p-4 rounded-xl bg-wine-950/40 border border-wine-800/40 space-y-1.5">
+            <div class="flex items-center gap-1.5 text-wine-300 text-xs font-bold uppercase tracking-wide">
+              <i data-lucide="quote" class="w-3 h-3 text-wine-400"></i> Argumento breve para sala:
+            </div>
+            <p id="modalPitch" class="text-xs text-stone-300 italic">
+              "Un vino con personalidad profunda y madera bien integrada; resalta enormemente la textura de cortes grasos."
+            </p>
+          </div>
+
+        </div>
+
+        <!-- CONTENIDO TAB 2: FICHA PRO VENDEDOR / DISTRIBUIDOR -->
+        <div id="viewPro" class="hidden space-y-6">
+          
+          <!-- Datos de Terroir & Crianza -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            
+            <div class="p-3.5 bg-stone-950 rounded-xl border border-stone-800 space-y-1">
+              <span class="text-stone-400 block font-medium">Crianza y Barrica</span>
+              <p id="modalAging" class="text-stone-100 font-semibold">14 meses en barrica de roble francés y americano (50/50)</p>
+            </div>
+
+            <div class="p-3.5 bg-stone-950 rounded-xl border border-stone-800 space-y-1">
+              <span class="text-stone-400 block font-medium">Suelo & Altitud</span>
+              <p id="modalTerroir" class="text-stone-100 font-semibold">Aluvial y arcilloso calcáreo a 350 m.s.n.m.</p>
+            </div>
+
+            <div class="p-3.5 bg-stone-950 rounded-xl border border-stone-800 space-y-1">
+              <span class="text-stone-400 block font-medium">Vinificación y Guarda</span>
+              <p id="modalVinification" class="text-stone-100 font-semibold">Fermentación maloláctica completa. Guarda estimada: 6 a 10 años.</p>
+            </div>
+
+            <div class="p-3.5 bg-stone-950 rounded-xl border border-stone-800 space-y-1">
+              <span class="text-stone-400 block font-medium">Recomendación de Decantado</span>
+              <p id="modalDecant" class="text-stone-100 font-semibold">Decantar 30 minutos antes para abrir aromas terciarios.</p>
+            </div>
+
+          </div>
+
+          <!-- Puntuaciones y Galardones -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-amber-400"></i> Reconocimientos y Guías
+            </h4>
+            <div id="modalAwards" class="flex flex-wrap gap-2">
+              <!-- Pills de premios inyectadas por JS -->
+            </div>
+          </div>
+
+          <!-- Simulación de Stock y Referencia Comercial -->
+          <div class="p-4 rounded-xl bg-stone-950 border border-stone-800 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div>
+              <span class="text-stone-400 block">Referencia de Distribución / SKU</span>
+              <span id="modalSku" class="font-mono text-stone-200 font-bold">WINE-MX-ST-2020</span>
+            </div>
+            <div>
+              <span class="text-stone-400 block">Disponibilidad en Cava</span>
+              <span class="text-emerald-400 font-bold flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 24 botellas listas
+              </span>
+            </div>
+            <div>
+              <span class="text-stone-400 block">Precio Sugerido Carta</span>
+              <span id="modalPrice" class="text-amber-400 font-bold text-sm">$1,450 MXN</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Pie del Modal con Acción de Cierre / Compartir -->
+      <div class="px-6 py-4 bg-stone-950 border-t border-stone-800 flex justify-between items-center text-xs">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-xl text-stone-400 hover:text-white transition-colors">
+          Cerrar
+        </button>
+        <button onclick="simulateOrderOrRecommend()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold transition-all shadow-lg shadow-amber-950/40 flex items-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i> Seleccionar para Mesa
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL / OVERLAY: ESCÁNER QR SIMULADO -->
+  <div id="qrModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-stone-900 border border-stone-800 max-w-sm w-full p-6 rounded-2xl text-center space-y-4">
+      <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+        <i data-lucide="scan" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-white">Escanear Código de Botella</h3>
+        <p class="text-xs text-stone-400 mt-1">Acerca la cámara al código QR de la etiqueta para abrir la ficha al instante.</p>
+      </div>
+
+      <!-- Cuadro simulador de cámara -->
+      <div class="relative w-48 h-48 mx-auto bg-stone-950 rounded-xl border border-stone-700 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-4 border-2 border-dashed border-amber-500/50 rounded-lg animate-pulse"></div>
+        <i data-lucide="qr-code" class="w-24 h-24 text-stone-700"></i>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="scanDemoBottle(1)" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs transition-colors">
+          Simular Detección: Único Bodegas Santo Tomás
+        </button>
+        <button onclick="toggleQrScanner()" class="w-full py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST TOPE -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden max-w-xs bg-stone-900 border border-amber-500/40 shadow-xl shadow-black/60 rounded-xl p-3.5 text-xs text-stone-200 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
+    <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0"></i>
+    <span id="toastMessage">Acción realizada</span>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT CLIENT-SIDE -->
+  <script>
+    // --- DATA MOCK: 5 VINOS REPRESENTATIVOS PARA EL PROTOTIPO ---
+    const WINES_DATABASE = [
+      {
+        id: 1,
+        name: "Único Gran Reserva",
+        winery: "Bodegas de Santo Tomás",
+        vintage: "2020",
+        type: "Tinto",
+        country: "México",
+        region: "Valle de Santo Tomás, Baja California",
+        grapes: "Cabernet Sauvignon (70%), Merlot (30%)",
+        abv: "13.9%",
+        price: "$1,680 MXN",
+        sku: "MX-BST-UNI-20",
+        bottleColor: "#4a0413", // SVG bottle tone
+        capsuleColor: "#d97706",
+        sensory: {
+          body: 85,
+          bodyLabel: "Robusto y Estructurado",
+          tannins: 75,
+          tanninsLabel: "Maduros y Firmes",
+          acidity: 55,
+          acidityLabel: "Frescura Media",
+          sweetness: 10,
+          sweetnessLabel: "Completamente Seco"
+        },
+        tastingNotes: ["Frutos negros maduros", "Cassis", "Roble tostado", "Cacao amargo", "Pimienta negra"],
+        pairings: ["Carnes"],
+        pairingDescription: "Cortes marmoleados al carbón (Rib Eye, Picaña), estofados de caza y quesos añejos curados de oveja.",
+        pitchText: "El pionero de la vitivinicultura bajacaliforniana: taninos amables pero gran músculo para cortes con grasa.",
+        service: {
+          glass: "Copa Burdeos",
+          temperature: "16° - 18°C",
+          decanting: "Decantar 30-40 minutos antes"
+        },
+        proDetails: {
+          aging: "14 meses en barricas nuevas de roble francés y americano",
+          terroir: "Suelos franco-arcillosos con excelente drenaje en valle templado",
+          vinification: "Cosecha manual, maceración prefermentativa en frío por 4 días",
+          scores: [
+            { critic: "Guía Peñín", score: "93 Pts" },
+            { critic: "Concurso Mundial Bruselas", score: "Medalla de Oro" }
+          ]
+        }
+      },
+      {
+        id: 2,
+        name: "Reserva Selección Especial",
+        winery: "Marqués de Riscal",
+        vintage: "2018",
+        type: "Tinto",
+        country: "España",
+        region: "D.O.Ca. Rioja Alavesa",
+        grapes: "Tempranillo (90%), Graciano (10%)",
+        abv: "14.2%",
+        price: "$1,350 MXN",
+        sku: "ES-MQR-RES-18",
+        bottleColor: "#330811",
+        capsuleColor: "#f59e0b",
+        sensory: {
+          body: 70,
+          bodyLabel: "Elegante y Equilibrado",
+          tannins: 60,
+          tanninsLabel: "Pulidos y Sedosos",
+          acidity: 65,
+          acidityLabel: "Vivaz y Prolongada",
+          sweetness: 5,
+          sweetnessLabel: "Seco Clásico"
+        },
+        tastingNotes: ["Cereza picota", "Vainilla balsámica", "Cedro", "Especias dulces", "Cuero fino"],
+        pairings: ["Carnes", "Aves"],
+        pairingDescription: "Cordero asado al horno de leña, lechón, jamón ibérico de bellota y guisos tradicionales.",
+        pitchText: "El epítome de la elegancia riojana: madera noble, acidez viva y una textura suave que nunca cansa el paladar.",
+        service: {
+          glass: "Copa Rioja / Burdeos",
+          temperature: "16° - 17°C",
+          decanting: "No indispensable; recomendable oxigenar 15 min."
+        },
+        proDetails: {
+          aging: "24 meses en barrica de roble americano + 12 meses en botella",
+          terroir: "Viñedos viejos de más de 40 años en terrazas arcillo-calcáreas",
+          vinification: "Fermentación a temperatura controlada (26°C), levaduras autóctonas",
+          scores: [
+            { critic: "James Suckling", score: "94 Pts" },
+            { critic: "Wine Spectator", score: "92 Pts" }
+          ]
+        }
+      },
+      {
+        id: 3,
+        name: "Catena Alta Historic Rows",
+        winery: "Catena Zapata",
+        vintage: "2021",
+        type: "Tinto",
+        country: "Argentina",
+        region: "Mendoza (Luján de Cuyo & Valle de Uco)",
+        grapes: "100% Malbec",
+        abv: "14.0%",
+        price: "$1,890 MXN",
+        sku: "AR-CAT-MAL-21",
+        bottleColor: "#260309",
+        capsuleColor: "#d97706",
+        sensory: {
+          body: 90,
+          bodyLabel: "Opulento y Concentrado",
+          tannins: 70,
+          tanninsLabel: "Dulces y Redondos",
+          acidity: 60,
+          acidityLabel: "Frescura de Altura",
+          sweetness: 12,
+          sweetnessLabel: "Fruta jugosa / Seco"
+        },
+        tastingNotes: ["Ciruela madura", "Violetas florales", "Mora azul", "Chocolate negro", "Toque mineral"],
+        pairings: ["Carnes"],
+        pairingDescription: "Bife de chorizo argentino, asado de tira a fuego lento y empanadas tradicionales de lomo cortado a cuchillo.",
+        pitchText: "Malbec de altura histórica: explosión de violetas en nariz con un paladar untuoso que envuelve toda la boca.",
+        service: {
+          glass: "Copa Borgoña / Malbec",
+          temperature: "17° - 18°C",
+          decanting: "Decantar 20 minutos"
+        },
+        proDetails: {
+          aging: "18 meses en barricas de roble francés (70% de primer uso)",
+          terroir: "Viñedos a 1,450 metros sobre el nivel del mar con suelos pedregosos calcáreos",
+          vinification: "Microvinificación en barricas de 225L y piletas de concreto",
+          scores: [
+            { critic: "Robert Parker (Wine Advocate)", score: "95 Pts" },
+            { critic: "Tim Atkin MW", score: "94 Pts" }
+          ]
+        }
+      },
+      {
+        id: 4,
+        name: "Albariño Selección de Añada",
+        winery: "Pazo de Señorans",
+        vintage: "2022",
+        type: "Blanco",
+        country: "España",
+        region: "D.O. Rías Baixas (Val do Salnés)",
+        grapes: "100% Albariño",
+        abv: "13.0%",
+        price: "$1,220 MXN",
+        sku: "ES-PZS-ALB-22",
+        bottleColor: "#997b19",
+        capsuleColor: "#eab308",
+        sensory: {
+          body: 45,
+          bodyLabel: "Medio con Grasa en Boca",
+          tannins: 0,
+          tanninsLabel: "Sin Taninos",
+          acidity: 85,
+          acidityLabel: "Vibrante y Salina",
+          sweetness: 8,
+          sweetnessLabel: "Muy Seco y Mineral"
+        },
+        tastingNotes: ["Manzana verde", "Cítricos confitados", "Hojas de laurel", "Salinidad marina", "Brioche ligero"],
+        pairings: ["Mariscos", "Aves"],
+        pairingDescription: "Ostras vivas, tiraditos de pescado blanco, percebes, langosta a la plancha y arroces caldosos marineros.",
+        pitchText: "La máxima expresión atlántica: crianza sobre lías que aporta una cremosidad fascinante sin perder su filo cítrico.",
+        service: {
+          glass: "Copa Tulipán / Vino Blanco",
+          temperature: "9° - 11°C",
+          decanting: "Servicio directo en frío controlado"
+        },
+        proDetails: {
+          aging: "Crianza mínima de 5 meses sobre sus lías finas en tanques de acero inoxidable",
+          terroir: "Suelos de xabre (granito descompuesto) con marcada influencia marina atlántica",
+          vinification: "Prensado neumático suave, fermentación controlada a 16°C",
+          scores: [
+            { critic: "Guía Peñín", score: "94 Pts" },
+            { critic: "Decanter World Wine Awards", score: "93 Pts" }
+          ]
+        }
+      },
+      {
+        id: 5,
+        name: "Brut Réserve Champagne",
+        winery: "Taittinger",
+        vintage: "N.V.",
+        type: "Espumoso",
+        country: "Francia",
+        region: "A.O.C. Champagne, Reims",
+        grapes: "Chardonnay (40%), Pinot Noir (35%), Pinot Meunier (25%)",
+        abv: "12.5%",
+        price: "$2,450 MXN",
+        sku: "FR-TTG-BRT-NV",
+        bottleColor: "#223518",
+        capsuleColor: "#facc15",
+        sensory: {
+          body: 35,
+          bodyLabel: "Ligero y Etéreo",
+          tannins: 0,
+          tanninsLabel: "Burbuja Fina y Cremosa",
+          acidity: 90,
+          acidityLabel: "Fresca y Electrizante",
+          sweetness: 15,
+          sweetnessLabel: "Brut Clásico (9 g/l)"
+        },
+        tastingNotes: ["Flores blancas", "Durazno blanco", "Pan tostado", "Miel de acacia", "Vainilla suave"],
+        pairings: ["Mariscos", "Postres"],
+        pairingDescription: "Caviar, carpaccio de vieiras, tablas de quesos Brie/Camembert o como aperitivo festivo de apertura.",
+        pitchText: "Alta proporción de Chardonnay: elegancia pura, burbuja persistente y toque de panadería ideal para brindar.",
+        service: {
+          glass: "Copa Flauta o Copa Tulipa Champagne",
+          temperature: "7° - 9°C",
+          decanting: "No decantar, mantener en frappera"
+        },
+        proDetails: {
+          aging: "Mínimo 3 a 4 años de crianza sobre rimas en cavas subterráneas de tiza (crayères)",
+          terroir: "Suelos de tiza calcárea de los mejores Crus de la Champaña",
+          vinification: "Ensamblaje con más de un 30% de vinos de reserva de añadas previas",
+          scores: [
+            { critic: "Wine Spectator", score: "93 Pts" },
+            { critic: "James Suckling", score: "92 Pts" }
+          ]
+        }
+      },
+      {
+        id: 6,
+        name: "Rosado de Syrah & Grenache",
+        winery: "Casa Madero",
+        vintage: "2023",
+        type: "Rosado",
+        country: "México",
+        region: "Valle de Parras, Coahuila",
+        grapes: "Syrah (60%), Grenache (40%)",
+        abv: "12.8%",
+        price: "$780 MXN",
+        sku: "MX-CSM-ROS-23",
+        bottleColor: "#831843",
+        capsuleColor: "#fb7185",
+        sensory: {
+          body: 30,
+          bodyLabel: "Ligero y Jugoso",
+          tannins: 5,
+          tanninsLabel: "Prácticamente Nulo",
+          acidity: 75,
+          acidityLabel: "Cítrica y Refrescante",
+          sweetness: 14,
+          sweetnessLabel: "Semiseco Afrutado"
+        },
+        tastingNotes: ["Fresa fresca", "Frambuesa", "Toronja rosada", "Pétalos de rosa"],
+        pairings: ["Mariscos", "Aves", "Postres"],
+        pairingDescription: "Ceviches con fruta, ensaladas mediterráneas, sushi de salmón y postres con frutos rojos.",
+        pitchText: "De la bodega más antigua de América: frescura inmediata de frutos rojos, perfecto para abrir apetito en terraza.",
+        service: {
+          glass: "Copa Vino Blanco / Rosado",
+          temperature: "8° - 10°C",
+          decanting: "Servicio inmediato en frío"
+        },
+        proDetails: {
+          aging: "Sin paso por barrica para conservar pura fruta y frescura primaria",
+          terroir: "Valle a 1,500 m.s.n.m. con noches frescas y alta oscilación térmica",
+          vinification: "Maceración pelicular de pocas horas (sangrado directo)",
+          scores: [
+            { critic: "México Selection by CMB", score: "Medalla de Plata" }
+          ]
+        }
+      }
+    ];
+
+    // --- ESTADO GLOBAL DE FILTROS ---
+    let currentTypeFilter = 'all';
+    let currentPairingFilter = null;
+    let searchQuery = '';
+    let selectedWine = null;
+
+    // --- GENERADOR DE SVG PARA BOTELLAS (Cero imágenes rotas) ---
+    function generateBottleSvg(wine) {
+      return `
+        <svg viewBox="0 0 100 280" class="w-full h-full max-h-56 filter drop-shadow-md">
+          <defs>
+            <linearGradient id="grad-${wine.id}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="${wine.bottleColor}" stop-opacity="0.9" />
+              <stop offset="30%" stop-color="${wine.bottleColor}" stop-opacity="1" />
+              <stop offset="60%" stop-color="#ffffff" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="${wine.bottleColor}" stop-opacity="0.85" />
+            </linearGradient>
+            <linearGradient id="cap-${wine.id}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="${wine.capsuleColor}" />
+              <stop offset="100%" stop-color="#78350f" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Cuello y cápsula -->
+          <rect x="44" y="25" width="12" height="55" rx="2" fill="url(#grad-${wine.id})" />
+          <rect x="42" y="15" width="16" height="35" rx="3" fill="url(#cap-${wine.id})" />
+          <rect x="40" y="12" width="20" height="6" rx="2" fill="${wine.capsuleColor}" />
+
+          <!-- Hombros y Cuerpo de botella -->
+          <path d="M 44 80 C 44 105, 20 115, 20 140 L 20 250 C 20 265, 80 265, 80 250 L 80 140 C 80 115, 56 105, 56 80 Z" 
+                fill="url(#grad-${wine.id})" />
+
+          <!-- Etiqueta Frontal Limpia -->
+          <rect x="26" y="145" width="48" height="75" rx="4" fill="#fafaf9" />
+          <line x1="32" y1="158" x2="68" y2="158" stroke="#d97706" stroke-width="1.5" />
+          <circle cx="50" cy="172" r="5" fill="#78350f" opacity="0.3" />
+          <line x1="30" y1="190" x2="70" y2="190" stroke="#44403c" stroke-width="2" />
+          <line x1="35" y1="196" x2="65" y2="196" stroke="#a8a29e" stroke-width="1" />
+          <text x="50" y="210" font-family="sans-serif" font-size="6" text-anchor="middle" fill="#78716c">${wine.vintage}</text>
+
+          <!-- Reflejo de vidrio -->
+          <path d="M 23 145 L 23 245" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round" />
+        </svg>
+      `;
+    }
+
+    // --- RENDERIZADO DEL CATÁLOGO ---
+    function renderWines() {
+      const grid = document.getElementById('winesGrid');
+      const emptyState = document.getElementById('emptyState');
+      const countVisible = document.getElementById('countVisible');
+
+      const filtered = WINES_DATABASE.filter(wine => {
+        // Filtro tipo
+        if (currentTypeFilter !== 'all' && wine.type !== currentTypeFilter) return false;
+        
+        // Filtro maridaje
+        if (currentPairingFilter && !wine.pairings.includes(currentPairingFilter)) return false;
+
+        // Búsqueda libre
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const matchName = wine.name.toLowerCase().includes(q);
+          const matchWinery = wine.winery.toLowerCase().includes(q);
+          const matchGrapes = wine.grapes.toLowerCase().includes(q);
+          const matchRegion = wine.region.toLowerCase().includes(q);
+          const matchNotes = wine.tastingNotes.some(note => note.toLowerCase().includes(q));
+          if (!matchName && !matchWinery && !matchGrapes && !matchRegion && !matchNotes) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      countVisible.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      grid.innerHTML = filtered.map(wine => {
+        const topScore = wine.proDetails.scores[0];
+        return `
+          <div class="group relative bg-stone-900/90 rounded-2xl border border-stone-800 hover:border-amber-500/50 hover:shadow-xl hover:shadow-wine-950/20 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            
+            <!-- Barra superior tarjeta -->
+            <div class="p-5 pb-3">
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${getTypeBadgeClass(wine.type)}">
+                  ${wine.type}
+                </span>
+                <span class="text-xs font-semibold text-stone-400 flex items-center gap-1">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-amber-500/80"></i> ${wine.country}
+                </span>
+              </div>
+
+              <!-- Contenido principal y botella -->
+              <div class="flex gap-4 items-center mt-3">
+                <!-- Botella Renderizada -->
+                <div class="w-20 h-40 bg-stone-950 rounded-xl border border-stone-800/80 flex items-center justify-center p-1 relative shrink-0 group-hover:scale-105 transition-transform">
+                  ${generateBottleSvg(wine)}
+                  <span class="absolute bottom-1 text-[9px] font-bold text-amber-400 bg-stone-900/90 px-1.5 py-0.5 rounded border border-stone-700">
+                    ${wine.vintage}
+                  </span>
+                </div>
+
+                <!-- Info Clave -->
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  <p class="text-[11px] uppercase tracking-wider font-semibold text-amber-500 truncate">${wine.winery}</p>
+                  <h3 class="text-base font-serif font-bold text-white group-hover:text-amber-300 transition-colors leading-snug line-clamp-2">
+                    ${wine.name}
+                  </h3>
+                  <p class="text-xs text-stone-400 truncate">${wine.region}</p>
+                  <p class="text-xs text-stone-300 font-medium line-clamp-1">${wine.grapes}</p>
+
+                  ${topScore ? `
+                    <div class="inline-flex items-center gap-1.5 text-[11px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 mt-1">
+                      <i data-lucide="award" class="w-3 h-3 text-amber-400"></i>
+                      <span>${topScore.score} · ${topScore.critic}</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Mini perfil sensorial rápido (Barras) -->
+              <div class="mt-4 pt-3 border-t border-stone-800/80 space-y-2 text-[11px]">
+                <div class="flex items-center justify-between text-stone-400">
+                  <span>Cuerpo: <b class="text-stone-200">${wine.sensory.bodyLabel}</b></span>
+                  <span>Taninos: <b class="text-stone-200">${wine.sensory.tanninsLabel}</b></span>
+                </div>
+
+                <!-- Pills de notas de cata -->
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  ${wine.tastingNotes.slice(0, 3).map(note => `
+                    <span class="text-[10px] bg-stone-800 text-stone-300 px-2 py-0.5 rounded-md border border-stone-700/60">
+                      ${note}
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Footer Tarjeta / Botón Abrir Ficha -->
+            <div class="p-4 pt-2 bg-stone-950/40 border-t border-stone-800/80 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-stone-500 uppercase block">Carta</span>
+                <span class="text-sm font-bold text-stone-200">${wine.price}</span>
+              </div>
+
+              <button 
+                onclick="openWineModal(${wine.id})"
+                class="px-4 py-2 rounded-xl bg-stone-800 hover:bg-amber-500 text-stone-200 hover:text-stone-950 text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-sm">
+                <span>Ver Ficha Pro</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+      // Reinicializar íconos Lucide inyectados
+      lucide.createIcons();
+    }
+
+    function getTypeBadgeClass(type) {
+      switch(type) {
+        case 'Tinto': return 'bg-rose-950/80 text-rose-300 border border-rose-800/60';
+        case 'Blanco': return 'bg-yellow-950/80 text-yellow-300 border border-yellow-800/60';
+        case 'Espumoso': return 'bg-amber-950/80 text-amber-300 border border-amber-800/60';
+        case 'Rosado': return 'bg-pink-950/80 text-pink-300 border border-pink-800/60';
+        default: return 'bg-stone-800 text-stone-300';
+      }
+    }
+
+    // --- ACCIONES Y FILTROS ---
+    function setTypeFilter(type) {
+      currentTypeFilter = type;
+      document.querySelectorAll('.filter-type-btn').forEach(btn => {
+        if (btn.dataset.type === type) {
+          btn.className = "filter-type-btn active px-3.5 py-1.5 rounded-lg text-xs font-medium bg-amber-500 text-stone-950 shadow-sm transition-all whitespace-nowrap";
+        } else {
+          btn.className = "filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap";
+        }
+      });
+      renderWines();
+    }
+
+    function togglePairingFilter(pairing) {
+      if (currentPairingFilter === pairing) {
+        currentPairingFilter = null;
+      } else {
+        currentPairingFilter = pairing;
+      }
+
+      document.querySelectorAll('.filter-pairing-btn').forEach(btn => {
+        if (btn.dataset.pairing === currentPairingFilter) {
+          btn.classList.add('bg-amber-500', 'text-stone-950', 'border-amber-400', 'font-bold');
+          btn.classList.remove('bg-stone-800/60', 'text-stone-300');
+        } else {
+          btn.classList.remove('bg-amber-500', 'text-stone-950', 'border-amber-400', 'font-bold');
+          btn.classList.add('bg-stone-800/60', 'text-stone-300');
+        }
+      });
+      renderWines();
+    }
+
+    function resetAllFilters() {
+      currentTypeFilter = 'all';
+      currentPairingFilter = null;
+      searchQuery = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchInputMobile').value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      
+      document.querySelectorAll('.filter-type-btn').forEach(btn => {
+        if (btn.dataset.type === 'all') {
+          btn.className = "filter-type-btn active px-3.5 py-1.5 rounded-lg text-xs font-medium bg-amber-500 text-stone-950 shadow-sm transition-all whitespace-nowrap";
+        } else {
+          btn.className = "filter-type-btn px-3.5 py-1.5 rounded-lg text-xs font-medium bg-stone-800/80 text-stone-300 hover:bg-stone-800 hover:text-white transition-all whitespace-nowrap";
+        }
+      });
+
+      document.querySelectorAll('.filter-pairing-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-stone-950', 'border-amber-400', 'font-bold');
+        btn.classList.add('bg-stone-800/60', 'text-stone-300');
+      });
+
+      renderWines();
+      showToast('Filtros restablecidos');
+    }
+
+    // --- MODAL DE DETALLE DUAL ---
+    function openWineModal(wineId) {
+      const wine = WINES_DATABASE.find(w => w.id === wineId);
+      if (!wine) return;
+      selectedWine = wine;
+
+      // Encabezado
+      const modalTypeBadge = document.getElementById('modalTypeBadge');
+      modalTypeBadge.textContent = wine.type;
+      modalTypeBadge.className = `text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${getTypeBadgeClass(wine.type)}`;
+      
+      document.getElementById('modalOrigin').textContent = `${wine.region}, ${wine.country}`;
+      document.getElementById('modalWinery').textContent = wine.winery;
+      document.getElementById('modalName').textContent = wine.name;
+      document.getElementById('modalGrapes').textContent = wine.grapes;
+      document.getElementById('modalVintageYear').textContent = wine.vintage;
+      document.getElementById('modalAbv').innerHTML = `<i data-lucide="gauge" class="w-3 h-3 text-amber-400"></i> ${wine.abv} Alc.`;
+      document.getElementById('modalTemp').innerHTML = `<i data-lucide="thermometer" class="w-3 h-3 text-sky-400"></i> ${wine.service.temperature}`;
+      document.getElementById('modalGlass').innerHTML = `<i data-lucide="cup-soda" class="w-3 h-3 text-purple-400"></i> ${wine.service.glass}`;
+
+      // Botella SVG
+      document.getElementById('modalBottleSvgContainer').innerHTML = generateBottleSvg(wine);
+
+      // Barras Sensoriales
+      document.getElementById('modalBodyLabel').textContent = wine.sensory.bodyLabel;
+      document.getElementById('modalBodyBar').style.width = `${wine.sensory.body}%`;
+
+      document.getElementById('modalTanninsLabel').textContent = wine.sensory.tanninsLabel;
+      document.getElementById('modalTanninsBar').style.width = `${wine.sensory.tannins}%`;
+
+      document.getElementById('modalAcidityLabel').textContent = wine.sensory.acidityLabel;
+      document.getElementById('modalAcidityBar').style.width = `${wine.sensory.acidity}%`;
+
+      document.getElementById('modalSweetLabel').textContent = wine.sensory.sweetnessLabel;
+      document.getElementById('modalSweetBar').style.width = `${wine.sensory.sweetness}%`;
+
+      // Notas de cata
+      const pillsContainer = document.getElementById('modalNotesPills');
+      pillsContainer.innerHTML = wine.tastingNotes.map(n => `
+        <span class="text-xs bg-stone-800 text-stone-200 border border-stone-700 px-3 py-1 rounded-full flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ${n}
+        </span>
+      `).join('');
+
+      // Maridaje & Pitch
+      document.getElementById('modalFoodText').textContent = wine.pairingDescription;
+      document.getElementById('modalPitch').textContent = `"${wine.pitchText}"`;
+
+      // Info Pro
+      document.getElementById('modalAging').textContent = wine.proDetails.aging;
+      document.getElementById('modalTerroir').textContent = wine.proDetails.terroir;
+      document.getElementById('modalVinification').textContent = wine.proDetails.vinification;
+      document.getElementById('modalDecant').textContent = wine.service.decanting;
+      document.getElementById('modalSku').textContent = wine.sku;
+      document.getElementById('modalPrice').textContent = wine.price;
+
+      // Premios
+      const awardsContainer = document.getElementById('modalAwards');
+      awardsContainer.innerHTML = wine.proDetails.scores.map(s => `
+        <div class="flex items-center gap-2 bg-stone-950 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs">
+          <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+          <div>
+            <span class="font-bold text-amber-300">${s.score}</span>
+            <span class="text-stone-400 text-[11px] block">${s.critic}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Tab por defecto: comensal
+      switchModalTab('comensal');
+
+      // Mostrar modal
+      document.getElementById('wineModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('wineModal').classList.add('hidden');
+      selectedWine = null;
+    }
+
+    function switchModalTab(tab) {
+      const tabComensal = document.getElementById('tabComensal');
+      const tabPro = document.getElementById('tabPro');
+      const viewComensal = document.getElementById('viewComensal');
+      const viewPro = document.getElementById('viewPro');
+
+      if (tab === 'comensal') {
+        tabComensal.className = "pb-3 px-4 text-xs font-semibold text-amber-400 border-b-2 border-amber-400 transition-all flex items-center gap-2";
+        tabPro.className = "pb-3 px-4 text-xs font-semibold text-stone-400 hover:text-stone-200 border-b-2 border-transparent transition-all flex items-center gap-2";
+        viewComensal.classList.remove('hidden');
+        viewPro.classList.add('hidden');
+      } else {
+        tabPro.className = "pb-3 px-4 text-xs font-semibold text-amber-400 border-b-2 border-amber-400 transition-all flex items-center gap-2";
+        tabComensal.className = "pb-3 px-4 text-xs font-semibold text-stone-400 hover:text-stone-200 border-b-2 border-transparent transition-all flex items-center gap-2";
+        viewPro.classList.remove('hidden');
+        viewComensal.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function copyWineSummary() {
+      if (!selectedWine) return;
+      const text = `🍷 *${selectedWine.name}* (${selectedWine.vintage})\n` +
+                   `Bodega: ${selectedWine.winery} | ${selectedWine.region}\n` +
+                   `Uvas: ${selectedWine.grapes}\n` +
+                   `Notas: ${selectedWine.tastingNotes.slice(0, 3).join(', ')}\n` +
+                   `Maridaje sugerido: ${selectedWine.pairingDescription}\n` +
+                   `Precio Carta: ${selectedWine.price}`;
+      
+      // Fallback seguro de copiado para iFrames
+      const tempInput = document.createElement("textarea");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      showToast('Ficha copiada al portapapeles');
+    }
+
+    function simulateOrderOrRecommend() {
+      if (!selectedWine) return;
+      closeModal();
+      showToast(`¡Botella seleccionada para servicio: ${selectedWine.name}!`);
+    }
+
+    // --- QR ESCÁNER SIMULADO ---
+    function toggleQrScanner() {
+      const qrModal = document.getElementById('qrModal');
+      qrModal.classList.toggle('hidden');
+      lucide.createIcons();
+    }
+
+    function scanDemoBottle(id) {
+      toggleQrScanner();
+      openWineModal(id);
+      showToast('Botella identificada por QR');
+    }
+
+    // --- SISTEMA DE TOAST ---
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    // --- BUSCADOR LISTENERS ---
+    const searchInput = document.getElementById('searchInput');
+    const searchInputMobile = document.getElementById('searchInputMobile');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+    function handleSearch(val) {
+      searchQuery = val;
+      if (val.trim().length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      renderWines();
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      searchInputMobile.value = e.target.value;
+      handleSearch(e.target.value);
+    });
+
+    searchInputMobile.addEventListener('input', (e) => {
+      searchInput.value = e.target.value;
+      handleSearch(e.target.value);
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInputMobile.value = '';
+      handleSearch('');
+    });
+
+    // Cerrar modal con tecla Escape o clic fuera
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        document.getElementById('qrModal').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('wineModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('wineModal')) {
+        closeModal();
+      }
+    });
+
+    // INICIALIZACIÓN AL CARGAR
+    window.onload = function() {
+      renderWines();
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
